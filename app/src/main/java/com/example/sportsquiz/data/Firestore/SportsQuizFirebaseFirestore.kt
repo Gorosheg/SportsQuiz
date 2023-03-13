@@ -2,23 +2,16 @@ package com.example.sportsquiz.data.Firestore
 
 import com.example.sportsquiz.data.model.Config
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreSettings
 import kotlinx.coroutines.tasks.await
 
-class SportsQuizFirebaseFirestore {
-
-    private val remoteDB = FirebaseFirestore.getInstance().apply {
-        firestoreSettings = FirebaseFirestoreSettings.Builder()
-            .setPersistenceEnabled(false)
-            .build()
-    }
+class SportsQuizFirebaseFirestore(val remoteDB: FirebaseFirestore) {
 
     suspend fun getConfig(): Config? {
-      return remoteDB.collection("message")
+        return remoteDB.collection("message")
             .get()
             .await()
-             .documents
-             .firstOrNull()
-             ?.toObject(Config::class.java)
+            .documents
+            .firstOrNull()
+            ?.toObject(Config::class.java)
     }
 }

@@ -3,11 +3,12 @@ package com.example.sportsquiz.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sportsquiz.data.Firestore.SportsQuizFirebaseFirestore
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.CancellationException
 
 class SportsQuizViewModel(
+    private val stateBuilder: StateBuilder,
     private val firebaseFirestore: SportsQuizFirebaseFirestore,
 ) : ViewModel() {
 
@@ -17,7 +18,7 @@ class SportsQuizViewModel(
         viewModelScope.launch {
             try {
                 val config = firebaseFirestore.getConfig()
-                state.value = SportsQuizState.SuccessUrl(config?.url!!)
+                state.value = stateBuilder.build(config)
             } catch (e: java.lang.Exception) {
                 if (e is CancellationException) throw e
                 e.printStackTrace()
