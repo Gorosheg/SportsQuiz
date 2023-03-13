@@ -23,11 +23,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun render(state: SportsQuizState) = with(binding) {
-        when(state) {
+        when (state) {
             SportsQuizState.Loading -> Unit
             SportsQuizState.Error -> Unit
-            is SportsQuizState.SuccessUrl -> url.text = state.url
+            is SportsQuizState.SuccessUrl -> showWebView(state.url)
             SportsQuizState.SuccessTemplate -> Unit
+        }
+    }
+
+    private fun showWebView(url: String) {
+        with(binding) {
+            webView.webView.settings.javaScriptEnabled = true
+            webView.webView.loadUrl(url)
         }
     }
 }
