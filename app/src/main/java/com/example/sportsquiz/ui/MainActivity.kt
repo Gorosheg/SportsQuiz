@@ -2,6 +2,8 @@ package com.example.sportsquiz.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.sportsquiz.R
@@ -9,6 +11,7 @@ import com.example.sportsquiz.databinding.ActivityMainBinding
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,15 +22,29 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        viewModel.state.onEach(::render).launchIn(lifecycleScope)
+        viewModel.state.onEach(::renderState).launchIn(lifecycleScope)
     }
 
-    private fun render(state: SportsQuizState) = with(binding) {
+    private fun renderState(state: SportsQuizState) = with(binding) {
         when (state) {
-            SportsQuizState.Loading -> Unit
-            SportsQuizState.Error -> Unit
-            is SportsQuizState.SuccessUrl -> showWebView(state.url)
-            SportsQuizState.SuccessTemplate -> Unit
+            SportsQuizState.Loading -> {
+                Unit
+            }
+            is SportsQuizState.SuccessUrl -> {
+                noInternetMessage.isGone = true
+                webView.webView.isVisible = true
+                showWebView(state.url)
+            }
+            SportsQuizState.SuccessTemplate -> {
+                webView.webView.isGone = true
+            }
+            SportsQuizState.NetworkError -> {
+                noInternetMessage.isVisible = true
+                webView.webView.isGone = true
+            }
+            SportsQuizState.Error -> {
+                webView.webView.isGone = true
+            }
         }
     }
 

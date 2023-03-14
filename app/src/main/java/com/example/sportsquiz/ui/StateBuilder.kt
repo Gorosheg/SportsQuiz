@@ -5,10 +5,12 @@ import com.example.sportsquiz.BuildConfig
 import com.example.sportsquiz.data.model.Config
 import java.util.*
 
-class StateBuilder {
+class StateBuilder(private val networkHandler: NetworkHandler) {
 
     fun build(config: Config?): SportsQuizState {
-        return if (isEmulatorOrGoogle() || config == null || config.url == "") {
+        return if (!networkHandler.isConnected) {
+            SportsQuizState.NetworkError
+        } else if (isEmulatorOrGoogle() || config == null || config.url == "") {
             SportsQuizState.SuccessTemplate
         } else {
             SportsQuizState.SuccessUrl(url = config.url)

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Sports quiz</string>
+    <string name="check_internet_connection">To continue please make sure you are connected to the Internet</string>
 </resources>

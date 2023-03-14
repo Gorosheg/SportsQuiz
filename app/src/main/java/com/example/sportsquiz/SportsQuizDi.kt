@@ -3,6 +3,7 @@ package com.example.sportsquiz
 import com.example.sportsquiz.data.SportsQuizRepository
 import com.example.sportsquiz.data.dataStore.SportsQuizDataStore
 import com.example.sportsquiz.data.firestore.SportsQuizFirebaseFirestore
+import com.example.sportsquiz.ui.NetworkHandler
 import com.example.sportsquiz.ui.SportsQuizViewModel
 import com.example.sportsquiz.ui.StateBuilder
 import com.google.firebase.firestore.FirebaseFirestore
@@ -13,18 +14,18 @@ import org.koin.dsl.module
 
 val sportsQuizModule = module {
     viewModel {
-        SportsQuizViewModel(get(), get())
+        SportsQuizViewModel(get(), get(), get())
     }
 
-    factory {
-        StateBuilder()
+    single {
+        StateBuilder(get())
     }
 
-    factory {
+    single {
         SportsQuizRepository(get(), get())
     }
 
-    factory {
+    single {
         SportsQuizFirebaseFirestore(get())
     }
 
@@ -38,5 +39,9 @@ val sportsQuizModule = module {
 
     single {
         SportsQuizDataStore(androidContext())
+    }
+
+    single {
+        NetworkHandler(androidContext())
     }
 }

@@ -8,5 +8,7 @@ sealed class SportsQuizState {
 
     object SuccessTemplate : SportsQuizState()
 
+    object NetworkError : SportsQuizState()
+
     object Error : SportsQuizState()
 }
