@@ -38,6 +38,7 @@ class SportsQuizViewModel(
                     state.update { SportsQuizState.NetworkError }
                 }
             }
+
             else -> Unit
         }
     }
