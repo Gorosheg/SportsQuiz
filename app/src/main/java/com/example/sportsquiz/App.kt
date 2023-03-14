@@ -1,6 +1,7 @@
 package com.example.sportsquiz
 
 import android.app.Application
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
 class App : Application() {
@@ -9,6 +10,8 @@ class App : Application() {
         super.onCreate()
 
         startKoin {
+            androidContext(this@App)
+
             modules(
                 sportsQuizModule
             )

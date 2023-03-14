@@ -33,7 +33,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun showWebView(url: String) {
         with(binding) {
-            webView.webView.settings.javaScriptEnabled = true
             webView.webView.loadUrl(url)
         }
     }

@@ -1,10 +1,13 @@
 package com.example.sportsquiz
 
-import com.example.sportsquiz.data.Firestore.SportsQuizFirebaseFirestore
+import com.example.sportsquiz.data.SportsQuizRepository
+import com.example.sportsquiz.data.dataStore.SportsQuizDataStore
+import com.example.sportsquiz.data.firestore.SportsQuizFirebaseFirestore
 import com.example.sportsquiz.ui.SportsQuizViewModel
 import com.example.sportsquiz.ui.StateBuilder
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -18,11 +21,14 @@ val sportsQuizModule = module {
     }
 
     factory {
-//        androidContext()
+        SportsQuizRepository(get(), get())
+    }
+
+    factory {
         SportsQuizFirebaseFirestore(get())
     }
 
-    factory<FirebaseFirestore> {
+    single {
         FirebaseFirestore.getInstance().apply {
             firestoreSettings = FirebaseFirestoreSettings.Builder()
                 .setPersistenceEnabled(false)
@@ -30,4 +36,7 @@ val sportsQuizModule = module {
         }
     }
 
+    single {
+        SportsQuizDataStore(androidContext())
+    }
 }
