@@ -34,8 +34,6 @@ class SportsQuizViewModel(
             else -> currentState.currentQuestion.id + 1
         }
 
-
-
         state.update {
             SuccessTemplate(
                 questionsList = currentState.questionsList,
@@ -43,6 +41,12 @@ class SportsQuizViewModel(
                 usersResult = getUsersResult(currentState, answerId),
                 currentQuestionId = currentState.currentQuestionId + 1
             )
+        }
+    }
+
+    fun retryQuiz() {
+        state.update {
+            stateBuilder.buildTemplateState()
         }
     }
 

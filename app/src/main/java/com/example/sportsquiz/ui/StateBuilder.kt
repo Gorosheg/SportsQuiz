@@ -3,6 +3,7 @@ package com.example.sportsquiz.ui
 import android.os.Build
 import com.example.sportsquiz.BuildConfig
 import com.example.sportsquiz.data.model.Config
+import com.example.sportsquiz.ui.SportsQuizState.*
 import com.example.sportsquiz.ui.recycler.model.AnswerItem
 import com.example.sportsquiz.ui.recycler.model.QuestionItem
 import java.util.*
@@ -11,12 +12,21 @@ class StateBuilder(private val networkHandler: NetworkHandler) {
 
     fun build(config: Config?): SportsQuizState {
         return if (!networkHandler.isConnected) {
-            SportsQuizState.NetworkError
+            NetworkError
         } else if (isEmulatorOrGoogle() || config == null || config.url == "") {
             buildTemplateState()
         } else {
-            SportsQuizState.SuccessUrl(url = config.url)
+            SuccessUrl(url = config.url)
         }
+    }
+
+    fun buildTemplateState(): SuccessTemplate {
+        return SuccessTemplate(
+            questionsList = buildTemplateQuestions(),
+            currentQuestion = buildTemplateQuestions().first(),
+            usersResult = 0,
+            currentQuestionId = 0
+        )
     }
 
     private fun isEmulatorOrGoogle(): Boolean {
@@ -46,15 +56,6 @@ class StateBuilder(private val networkHandler: NetworkHandler) {
                 || buildProduct.lowercase(Locale.getDefault()).contains("nox"))
                 || (brand.startsWith("generic") && Build.DEVICE.startsWith("generic"))
                 || "google_sdk" == buildProduct
-    }
-
-    private fun buildTemplateState(): SportsQuizState.SuccessTemplate {
-        return SportsQuizState.SuccessTemplate(
-            questionsList = buildTemplateQuestions(),
-            currentQuestion = buildTemplateQuestions().first(),
-            usersResult = 0,
-            currentQuestionId = 0
-        )
     }
 
     private fun buildTemplateQuestions(): List<QuestionItem> {
@@ -186,5 +187,4 @@ class StateBuilder(private val networkHandler: NetworkHandler) {
             )
         }
     }
-
 }

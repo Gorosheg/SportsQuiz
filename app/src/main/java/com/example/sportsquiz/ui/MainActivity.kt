@@ -89,10 +89,14 @@ class MainActivity : AppCompatActivity() {
                 quiz.question.text = getString(string.game_completed)
                 quiz.counterHeader.text = getCounterHeaderText(usersResult)
                 quiz.questionCounter.text = buildQuestionCounter(usersResult, questionsList.size)
+                quiz.retryImage.isVisible = true
+                quiz.retryImage.setOnClickListener { viewModel.retryQuiz() }
             } else {
+                quiz.answersRecycler.isVisible = true
                 quiz.question.text = currentQuestion.text
                 quiz.counterHeader.text = getCounterHeaderText()
                 quiz.questionCounter.text = buildQuestionCounter(currentQuestion.id + 1, questionsList.size)
+                quiz.retryImage.isGone = true
             }
         }
     }
@@ -103,7 +107,7 @@ class MainActivity : AppCompatActivity() {
             2, 3 -> getString(string.bad_result)
             4, 5 -> getString(string.not_bad_result)
             6, 7 -> getString(string.good_result)
-            8, 9 -> getString(string.excellent_result)
+            8, 9, 10 -> getString(string.excellent_result)
             else -> getString(string.question_number)
         }
     }
