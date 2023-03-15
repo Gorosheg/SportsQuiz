@@ -58,7 +58,6 @@ class SportsQuizViewModel(
         }
     }
 
-
     private fun networkUpdate(isConnected: Boolean) {
         when (state.value) {
             NetworkError -> {
@@ -67,6 +66,7 @@ class SportsQuizViewModel(
                     loadConfig()
                 }
             }
+
             is SuccessUrl -> {
                 if (!isConnected) {
                     state.update { NetworkError }

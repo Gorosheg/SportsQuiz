@@ -1,4 +1,4 @@
-package com.example.sportsquiz.ui.recycler
+package com.example.sportsquiz.ui.recycler.base
 
 import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
 import com.hannesdorfmann.adapterdelegates4.AdapterDelegatesManager

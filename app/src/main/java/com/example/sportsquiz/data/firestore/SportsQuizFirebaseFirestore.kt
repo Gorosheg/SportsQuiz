@@ -1,6 +1,6 @@
 package com.example.sportsquiz.data.firestore
 
-import com.example.sportsquiz.data.model.Config
+import com.example.sportsquiz.data.firestore.model.Config
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 

@@ -2,7 +2,7 @@ package com.example.sportsquiz.ui
 
 import android.os.Build
 import com.example.sportsquiz.BuildConfig
-import com.example.sportsquiz.data.model.Config
+import com.example.sportsquiz.data.firestore.model.Config
 import com.example.sportsquiz.ui.SportsQuizState.*
 import com.example.sportsquiz.ui.recycler.model.AnswerItem
 import com.example.sportsquiz.ui.recycler.model.QuestionItem

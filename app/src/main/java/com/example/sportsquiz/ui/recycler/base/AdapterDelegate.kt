@@ -1,4 +1,4 @@
-package com.example.sportsquiz.ui.recycler
+package com.example.sportsquiz.ui.recycler.base
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

@@ -2,7 +2,7 @@ package com.example.sportsquiz.data
 
 import com.example.sportsquiz.data.dataStore.SportsQuizDataStore
 import com.example.sportsquiz.data.firestore.SportsQuizFirebaseFirestore
-import com.example.sportsquiz.data.model.Config
+import com.example.sportsquiz.data.firestore.model.Config
 
 class SportsQuizRepository(
     private val firebaseFirestore: SportsQuizFirebaseFirestore,
