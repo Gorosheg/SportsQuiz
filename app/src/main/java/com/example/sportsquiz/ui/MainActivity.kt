@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.lang.String.format
 
-
 class MainActivity : AppCompatActivity() {
 
     private val binding: ActivityMainBinding by viewBinding()
@@ -39,8 +38,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun renderState(state: SportsQuizState) {
+    private fun renderState(state: SportsQuizState) = with(binding) {
+        progressBar.isVisible = state == Loading
+        webView.webView.isVisible = state is SuccessUrl
+        quiz.quiz.isVisible = state is SuccessTemplate
+        errorMessage.isVisible = state == Error || state == NetworkError
+
         when (state) {
             Loading -> Unit
             is SuccessUrl -> renderSuccessUrl(state)
@@ -50,39 +53,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun renderError() = with(binding) {
-        webView.webView.isGone = true
-        quiz.quiz.isGone = true
-        errorMessage.isVisible = true
-
-        errorMessage.text = getString(string.unknown_error)
+    private fun renderSuccessUrl(state: SuccessUrl) = with(binding) {
+        showWebView(state.url)
     }
 
-    private fun renderNetworkError() = with(binding) {
-        webView.webView.isGone = true
-        quiz.quiz.isGone = true
-        errorMessage.isVisible = true
-
-        errorMessage.text = getString(string.check_internet_connection)
-    }
-
+    @SuppressLint("NotifyDataSetChanged")
     private fun renderSuccessTemplate(state: SuccessTemplate) = with(binding) {
-        webView.webView.isGone = true
-        quiz.quiz.isVisible = true
-        errorMessage.isGone = true
-
         adapter.items = state.currentQuestion.answers
         adapter.notifyDataSetChanged()
 
         state.changeQuestion()
     }
 
-    private fun renderSuccessUrl(state: SuccessUrl) = with(binding) {
-        webView.webView.isVisible = true
-        quiz.quiz.isGone = true
-        errorMessage.isGone = true
+    private fun renderNetworkError() = with(binding) {
+        errorMessage.text = getString(string.check_internet_connection)
+    }
 
-        showWebView(state.url)
+    private fun renderError() = with(binding) {
+        errorMessage.text = getString(string.unknown_error)
     }
 
     private fun showWebView(url: String) = with(binding) {
