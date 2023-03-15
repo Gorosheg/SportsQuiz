@@ -12,6 +12,7 @@ sealed class SportsQuizState {
         val questionsList: List<QuestionItem>,
         val currentQuestion: QuestionItem,
         val usersResult: Int,
+        val currentQuestionId: Int,
     ) : SportsQuizState()
 
     object NetworkError : SportsQuizState()

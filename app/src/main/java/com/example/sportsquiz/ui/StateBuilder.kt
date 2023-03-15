@@ -52,7 +52,8 @@ class StateBuilder(private val networkHandler: NetworkHandler) {
         return SportsQuizState.SuccessTemplate(
             questionsList = buildTemplateQuestions(),
             currentQuestion = buildTemplateQuestions().first(),
-            usersResult = 0
+            usersResult = 0,
+            currentQuestionId = 0
         )
     }
 

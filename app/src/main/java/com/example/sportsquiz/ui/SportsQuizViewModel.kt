@@ -3,6 +3,7 @@ package com.example.sportsquiz.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sportsquiz.data.SportsQuizRepository
+import com.example.sportsquiz.ui.SportsQuizState.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -16,7 +17,7 @@ class SportsQuizViewModel(
     private val networkHandler: NetworkHandler,
 ) : ViewModel() {
 
-    val state: MutableStateFlow<SportsQuizState> = MutableStateFlow(SportsQuizState.Loading)
+    val state: MutableStateFlow<SportsQuizState> = MutableStateFlow(Loading)
 
     init {
         networkHandler.listen()
@@ -25,17 +26,46 @@ class SportsQuizViewModel(
         loadConfig()
     }
 
+    fun onAnswerClick(answerId: Int) {
+        val currentState = state.value as SuccessTemplate
+
+        val questionNumber = when (currentState.currentQuestion.id + 1) {
+            currentState.questionsList.size -> currentState.currentQuestion.id
+            else -> currentState.currentQuestion.id + 1
+        }
+
+
+
+        state.update {
+            SuccessTemplate(
+                questionsList = currentState.questionsList,
+                currentQuestion = currentState.questionsList[questionNumber],
+                usersResult = getUsersResult(currentState, answerId),
+                currentQuestionId = currentState.currentQuestionId + 1
+            )
+        }
+    }
+
+    private fun getUsersResult(currentState: SuccessTemplate, answerId: Int): Int {
+        return if (currentState.currentQuestion.correctAnswerId == answerId) {
+            currentState.usersResult + 1
+        } else {
+            currentState.usersResult
+        }
+    }
+
+
     private fun networkUpdate(isConnected: Boolean) {
         when (state.value) {
-            SportsQuizState.NetworkError -> {
+            NetworkError -> {
                 if (isConnected) {
-                    state.update { SportsQuizState.Loading }
+                    state.update { Loading }
                     loadConfig()
                 }
             }
-            is SportsQuizState.SuccessUrl -> {
+            is SuccessUrl -> {
                 if (!isConnected) {
-                    state.update { SportsQuizState.NetworkError }
+                    state.update { NetworkError }
                 }
             }
 
@@ -53,9 +83,9 @@ class SportsQuizViewModel(
                 e.printStackTrace()
 
                 if (networkHandler.isConnected) {
-                    state.value = SportsQuizState.Error
+                    state.value = Error
                 } else {
-                    state.value = SportsQuizState.NetworkError
+                    state.value = NetworkError
                 }
             }
         }

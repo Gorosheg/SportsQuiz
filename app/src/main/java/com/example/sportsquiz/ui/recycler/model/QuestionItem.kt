@@ -4,5 +4,5 @@ class QuestionItem(
     val id: Int,
     val text: String,
     val answers: List<AnswerItem>,
-    val correctAnswer: Int,
+    val correctAnswerId: Int,
 )

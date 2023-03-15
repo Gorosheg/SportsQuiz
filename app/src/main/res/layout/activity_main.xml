@@ -7,7 +7,7 @@
     tools:context=".ui.MainActivity">
 
     <TextView
-        android:id="@+id/noInternetMessage"
+        android:id="@+id/errorMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -23,6 +23,12 @@
     <include
         android:id="@+id/webView"
         layout="@layout/web_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <include
+        android:id="@+id/quiz"
+        layout="@layout/quiz"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
