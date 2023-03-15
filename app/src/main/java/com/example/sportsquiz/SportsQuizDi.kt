@@ -1,11 +1,13 @@
 package com.example.sportsquiz
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import com.example.sportsquiz.data.SportsQuizRepository
 import com.example.sportsquiz.data.dataStore.SportsQuizDataStore
 import com.example.sportsquiz.data.firestore.SportsQuizFirebaseFirestore
-import com.example.sportsquiz.ui.NetworkHandler
-import com.example.sportsquiz.ui.SportsQuizViewModel
-import com.example.sportsquiz.ui.StateBuilder
+import com.example.sportsquiz.ui.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import org.koin.android.ext.koin.androidContext
@@ -41,7 +43,19 @@ val sportsQuizModule = module {
         SportsQuizDataStore(androidContext())
     }
 
-    single {
-        NetworkHandler(androidContext())
+    single<NetworkHandler> {
+        val connectivityMonitor =
+            if (is24orMore()) NougatNetworkHandler(get())
+            else LegacyNetworkHandler(androidContext(), get())
+
+        connectivityMonitor.apply { startListening() }
     }
+
+    single {
+        androidContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    }
+}
+
+fun is24orMore(): Boolean {
+    return VERSION.SDK_INT >= VERSION_CODES.N
 }

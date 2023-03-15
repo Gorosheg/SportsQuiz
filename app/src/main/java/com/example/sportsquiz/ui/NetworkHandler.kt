@@ -1,43 +1,87 @@
 package com.example.sportsquiz.ui
 
+import android.annotation.TargetApi
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.net.ConnectivityManager
-import android.net.ConnectivityManager.NetworkCallback
 import android.net.Network
-import android.net.NetworkCapabilities
-import android.net.NetworkRequest
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 
-
-class NetworkHandler(private val context: Context) : NetworkCallback() {
-
-    val isNetworkConnected: MutableStateFlow<Boolean> = MutableStateFlow(true)
-
+interface NetworkHandler {
     val isConnected: Boolean
-        get() = isNetworkConnected.value
+    val isNetworkConnected: MutableStateFlow<Boolean>
+}
 
-    private val networkRequest: NetworkRequest = NetworkRequest.Builder()
-        .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-        .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-        .build()
+abstract class NetworkHandlerImpl(
+    protected val connectivityManager: ConnectivityManager,
+) : NetworkHandler {
 
-    fun listen() {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        connectivityManager.registerNetworkCallback(networkRequest, this)
+    @Volatile
+    protected var cachedIsConnected = false
+
+    override val isConnected: Boolean
+        get() = cachedIsConnected
+
+    override val isNetworkConnected = MutableStateFlow(true)
+
+    abstract fun startListening()
+
+    abstract fun stopListening()
+}
+
+@Suppress("Deprecation")
+@TargetApi(23)
+class LegacyNetworkHandler(
+    private val context: Context,
+    connectivityManager: ConnectivityManager,
+) : NetworkHandlerImpl(connectivityManager) {
+
+    private val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+
+    private val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val isConnected = connectivityManager.activeNetworkInfo?.isConnected == true
+            cachedIsConnected = isConnected
+            isNetworkConnected.update { isConnected }
+        }
     }
 
-    override fun onAvailable(network: Network) {
-        super.onAvailable(network)
-        isNetworkConnected.value = true
+    override fun startListening() {
+        context.registerReceiver(receiver, filter)
     }
 
-    override fun onLost(network: Network) {
-        super.onLost(network)
-        isNetworkConnected.value = false
+    override fun stopListening() {
+        context.unregisterReceiver(receiver)
+    }
+}
+
+@TargetApi(24)
+class NougatNetworkHandler(
+    connectivityManager: ConnectivityManager,
+) : NetworkHandlerImpl(connectivityManager) {
+
+    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        override fun onAvailable(network: Network) {
+            super.onAvailable(network)
+            cachedIsConnected = true
+            isNetworkConnected.update { true }
+        }
+
+        override fun onLost(network: Network) {
+            super.onLost(network)
+            cachedIsConnected = false
+            isNetworkConnected.update { false }
+        }
     }
 
-    override fun onUnavailable() {
-        super.onUnavailable()
-        isNetworkConnected.value = false
+    override fun startListening() {
+        connectivityManager.registerDefaultNetworkCallback(networkCallback)
+    }
+
+    override fun stopListening() {
+        connectivityManager.unregisterNetworkCallback(networkCallback)
     }
 }

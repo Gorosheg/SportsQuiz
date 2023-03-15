@@ -20,7 +20,6 @@ class SportsQuizViewModel(
     val state: MutableStateFlow<SportsQuizState> = MutableStateFlow(Loading)
 
     init {
-        networkHandler.listen()
         networkHandler.isNetworkConnected.onEach(::networkUpdate).launchIn(viewModelScope)
 
         loadConfig()
