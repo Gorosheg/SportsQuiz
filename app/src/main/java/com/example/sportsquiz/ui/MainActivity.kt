@@ -9,6 +9,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.sportsquiz.R.layout
 import com.example.sportsquiz.R.string
 import com.example.sportsquiz.databinding.ActivityMainBinding
+import com.example.sportsquiz.ui.SportsQuizState.*
 import com.example.sportsquiz.ui.recycler.CommonAdapter
 import com.example.sportsquiz.ui.recycler.answersDelegate
 import kotlinx.coroutines.flow.launchIn
@@ -39,16 +40,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun renderState(state: SportsQuizState) = with(binding) {
         when (state) {
-            SportsQuizState.Loading -> Unit
+            Loading -> Unit
 
-            is SportsQuizState.SuccessUrl -> {
+            is SuccessUrl -> {
                 webView.webView.isVisible = true
                 quiz.quiz.isGone = true
                 errorMessage.isGone = true
 
                 showWebView(state.url)
             }
-            is SportsQuizState.SuccessTemplate -> {
+            is SuccessTemplate -> {
                 webView.webView.isGone = true
                 quiz.quiz.isVisible = true
                 errorMessage.isGone = true
@@ -56,26 +57,16 @@ class MainActivity : AppCompatActivity() {
                 adapter.items = state.currentQuestion.answers
                 adapter.notifyDataSetChanged()
 
-                if (state.currentQuestionId == state.questionsList.size) {
-                    quiz.answersRecycler.isGone = true
-                } else {
-                    quiz.question.text = state.currentQuestion.text
-                    quiz.questionCounter.text =
-                        format(
-                            resources.getString(string.questions_count),
-                            state.currentQuestion.id + 1,
-                            state.questionsList.size
-                        )
-                }
+                state.changeQuestion()
             }
-            SportsQuizState.NetworkError -> {
+            NetworkError -> {
                 webView.webView.isGone = true
                 quiz.quiz.isGone = true
                 errorMessage.isVisible = true
 
                 errorMessage.text = getString(string.check_internet_connection)
             }
-            SportsQuizState.Error -> {
+            Error -> {
                 webView.webView.isGone = true
                 quiz.quiz.isGone = true
                 errorMessage.isVisible = true
@@ -90,4 +81,36 @@ class MainActivity : AppCompatActivity() {
             webView.webView.loadUrl(url)
         }
     }
+
+    private fun SuccessTemplate.changeQuestion() {
+        with(binding) {
+            if (currentQuestionId == questionsList.size) {
+                quiz.answersRecycler.isGone = true
+                quiz.question.text = getString(string.game_completed)
+                quiz.counterHeader.text = getCounterHeaderText(usersResult)
+                quiz.questionCounter.text = buildQuestionCounter(usersResult, questionsList.size)
+            } else {
+                quiz.question.text = currentQuestion.text
+                quiz.counterHeader.text = getCounterHeaderText()
+                quiz.questionCounter.text = buildQuestionCounter(currentQuestion.id + 1, questionsList.size)
+            }
+        }
+    }
+
+    private fun getCounterHeaderText(usersResult: Int? = null): String {
+        return when (usersResult) {
+            0, 1 -> getString(string.try_again)
+            2, 3 -> getString(string.bad_result)
+            4, 5 -> getString(string.not_bad_result)
+            6, 7 -> getString(string.good_result)
+            8, 9 -> getString(string.excellent_result)
+            else -> getString(string.question_number)
+        }
+    }
+
+    private fun buildQuestionCounter(firstNum: Int, secondNum: Int) = format(
+        getString(string.questions_count),
+        firstNum,
+        secondNum
+    )
 }

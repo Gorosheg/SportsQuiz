@@ -3,4 +3,11 @@
     <string name="check_internet_connection">To continue please make sure you are connected to the Internet</string>
     <string name="unknown_error">Something went wrong</string>
     <string name="questions_count"> %1$d / %2$d</string>
+    <string name="question_number">Question number:</string>
+    <string name="try_again">Try it again</string>
+    <string name="bad_result">You can better</string>
+    <string name="not_bad_result">Not bad</string>
+    <string name="good_result">Good</string>
+    <string name="excellent_result">Excellent</string>
+    <string name="game_completed">Game completed!</string>
 </resources>
