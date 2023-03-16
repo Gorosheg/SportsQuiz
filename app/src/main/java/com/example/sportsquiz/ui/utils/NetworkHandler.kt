@@ -8,11 +8,14 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.Network
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
 interface NetworkHandler {
+
     val isConnected: Boolean
-    val isNetworkConnected: MutableStateFlow<Boolean>
+
+    val isNetworkConnected: StateFlow<Boolean>
 }
 
 abstract class NetworkHandlerImpl(

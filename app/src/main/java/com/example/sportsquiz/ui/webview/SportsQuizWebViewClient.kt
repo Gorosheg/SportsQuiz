@@ -1,4 +1,6 @@
-package com.example.sportsquiz.ui
+@file:Suppress("OVERRIDE_DEPRECATION", "SetJavaScriptEnabled")
+
+package com.example.sportsquiz.ui.webview
 
 import android.annotation.TargetApi
 import android.os.Build

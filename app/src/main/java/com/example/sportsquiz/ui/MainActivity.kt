@@ -12,9 +12,11 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.sportsquiz.R.layout
 import com.example.sportsquiz.R.string
 import com.example.sportsquiz.databinding.ActivityMainBinding
-import com.example.sportsquiz.ui.SportsQuizState.*
+import com.example.sportsquiz.ui.model.SportsQuizState
+import com.example.sportsquiz.ui.model.SportsQuizState.*
 import com.example.sportsquiz.ui.recycler.answersDelegate
 import com.example.sportsquiz.ui.recycler.base.CommonAdapter
+import com.example.sportsquiz.ui.webview.SportsQuizWebViewClient
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.android.ext.android.inject
@@ -36,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(layout.activity_main)
 
         binding.quiz.answersRecycler.adapter = adapter
-        handleWebViewOnBAckPressed()
+        handleWebViewOnBackPressed()
 
         viewModel.state.onEach { state -> renderState(state, savedInstanceState) }.launchIn(lifecycleScope)
     }
@@ -46,12 +48,12 @@ class MainActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState, outPersistentState)
     }
 
-    private fun handleWebViewOnBAckPressed() = with(binding) {
+    private fun handleWebViewOnBackPressed() = with(binding) {
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (webView.webView.canGoBack()) {
                     webView.webView.goBack()
-                } else Unit
+                }
             }
         })
     }

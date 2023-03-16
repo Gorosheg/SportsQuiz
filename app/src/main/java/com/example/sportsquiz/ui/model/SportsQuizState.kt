@@ -1,6 +1,4 @@
-package com.example.sportsquiz.ui
-
-import com.example.sportsquiz.ui.recycler.model.QuestionItem
+package com.example.sportsquiz.ui.model
 
 sealed class SportsQuizState {
 

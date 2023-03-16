@@ -1,4 +1,4 @@
-package com.example.sportsquiz.ui.recycler.model
+package com.example.sportsquiz.ui.model
 
 import com.example.sportsquiz.ui.recycler.base.ListItem
 

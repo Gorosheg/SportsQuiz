@@ -3,7 +3,9 @@ package com.example.sportsquiz.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sportsquiz.data.SportsQuizRepository
-import com.example.sportsquiz.ui.SportsQuizState.*
+import com.example.sportsquiz.ui.builder.StateBuilder
+import com.example.sportsquiz.ui.model.SportsQuizState
+import com.example.sportsquiz.ui.model.SportsQuizState.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -80,15 +82,15 @@ class SportsQuizViewModel(
         viewModelScope.launch {
             try {
                 val config = repository.getConfig()
-                state.value = stateBuilder.build(config)
+                state.update { stateBuilder.build(config) }
             } catch (e: Exception) {
                 if (e is CancellationException) throw e
                 e.printStackTrace()
 
                 if (networkHandler.isConnected) {
-                    state.value = Error
+                    state.update { Error }
                 } else {
-                    state.value = NetworkError
+                    state.update { NetworkError }
                 }
             }
         }

@@ -7,7 +7,12 @@ import android.os.Build.VERSION_CODES
 import com.example.sportsquiz.data.SportsQuizRepository
 import com.example.sportsquiz.data.dataStore.SportsQuizDataStore
 import com.example.sportsquiz.data.firestore.SportsQuizFirebaseFirestore
-import com.example.sportsquiz.ui.*
+import com.example.sportsquiz.ui.LegacyNetworkHandler
+import com.example.sportsquiz.ui.NetworkHandler
+import com.example.sportsquiz.ui.NougatNetworkHandler
+import com.example.sportsquiz.ui.SportsQuizViewModel
+import com.example.sportsquiz.ui.builder.StateBuilder
+import com.example.sportsquiz.ui.webview.SportsQuizWebViewClient
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import org.koin.android.ext.koin.androidContext
