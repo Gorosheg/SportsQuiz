@@ -1,6 +1,8 @@
 ### Android ###
 # Built application files
+*.apk
 *.aab
+output-metadata.json
 
 # Generated files
 bin/
@@ -69,3 +71,5 @@ hs_err_pid*
 !/gradle/wrapper/gradle-wrapper.jar
 
 .idea/
+
+*.jks
