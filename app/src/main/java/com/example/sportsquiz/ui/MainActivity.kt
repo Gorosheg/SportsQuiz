@@ -2,6 +2,7 @@ package com.example.sportsquiz.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -15,6 +16,7 @@ import com.example.sportsquiz.ui.recycler.answersDelegate
 import com.example.sportsquiz.ui.recycler.base.CommonAdapter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.lang.String.format
 
@@ -22,6 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     private val binding: ActivityMainBinding by viewBinding()
     private val viewModel: SportsQuizViewModel by viewModel()
+    private val webViewClient: SportsQuizWebViewClient by inject()
 
     private val adapter = CommonAdapter(
         answersDelegate { viewModel.onAnswerClick(it) }
@@ -31,11 +34,24 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(layout.activity_main)
 
-        viewModel.state.onEach(::renderState).launchIn(lifecycleScope)
-
         with(binding) {
             quiz.answersRecycler.adapter = adapter
+            handleWebViewOnBAckPressed()
         }
+
+        viewModel.state.onEach(::renderState).launchIn(lifecycleScope)
+    }
+
+    private fun handleWebViewOnBAckPressed() = with(binding) {
+        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (webView.webView.canGoBack()) {
+                    webView.webView.goBack()
+                } else {
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
     }
 
     private fun renderState(state: SportsQuizState) = with(binding) {
@@ -75,6 +91,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showWebView(url: String) = with(binding) {
         webView.webView.loadUrl(url)
+        webView.webView.webViewClient = webViewClient
     }
 
     private fun SuccessTemplate.changeQuestion() = with(binding) {

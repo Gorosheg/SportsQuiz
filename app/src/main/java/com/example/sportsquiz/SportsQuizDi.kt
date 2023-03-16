@@ -54,6 +54,10 @@ val sportsQuizModule = module {
     single {
         androidContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     }
+
+    single {
+        SportsQuizWebViewClient()
+    }
 }
 
 fun is24orMore(): Boolean {
