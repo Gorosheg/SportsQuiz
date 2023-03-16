@@ -2,6 +2,7 @@ package com.example.sportsquiz.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.PersistableBundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
@@ -34,12 +35,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(layout.activity_main)
 
-        with(binding) {
-            quiz.answersRecycler.adapter = adapter
-            handleWebViewOnBAckPressed()
-        }
+        binding.quiz.answersRecycler.adapter = adapter
+        handleWebViewOnBAckPressed()
 
-        viewModel.state.onEach(::renderState).launchIn(lifecycleScope)
+        viewModel.state.onEach { state -> renderState(state, savedInstanceState) }.launchIn(lifecycleScope)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        binding.webView.webView.saveState(outState)
+        super.onSaveInstanceState(outState, outPersistentState)
     }
 
     private fun handleWebViewOnBAckPressed() = with(binding) {
@@ -47,14 +51,12 @@ class MainActivity : AppCompatActivity() {
             override fun handleOnBackPressed() {
                 if (webView.webView.canGoBack()) {
                     webView.webView.goBack()
-                } else {
-                    onBackPressedDispatcher.onBackPressed()
-                }
+                } else Unit
             }
         })
     }
 
-    private fun renderState(state: SportsQuizState) = with(binding) {
+    private fun renderState(state: SportsQuizState, savedInstanceState: Bundle?) = with(binding) {
         progressBar.isVisible = state == Loading
         webView.webView.isVisible = state is SuccessUrl
         quiz.quiz.isVisible = state is SuccessTemplate
@@ -62,15 +64,19 @@ class MainActivity : AppCompatActivity() {
 
         when (state) {
             Loading -> Unit
-            is SuccessUrl -> renderSuccessUrl(state)
+            is SuccessUrl -> renderSuccessUrl(state.url, savedInstanceState)
             is SuccessTemplate -> renderSuccessTemplate(state)
             NetworkError -> renderNetworkError()
             Error -> renderError()
         }
     }
 
-    private fun renderSuccessUrl(state: SuccessUrl) = with(binding) {
-        showWebView(state.url)
+    private fun renderSuccessUrl(url: String, savedInstanceState: Bundle?) = with(binding) {
+        webView.webView.webViewClient = webViewClient
+        webViewClient.setWebViewSettings(webView.webView.settings)
+
+        if (savedInstanceState != null) webView.webView.restoreState(savedInstanceState)
+        else webView.webView.loadUrl(url)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -81,17 +87,12 @@ class MainActivity : AppCompatActivity() {
         state.changeQuestion()
     }
 
-    private fun renderNetworkError() = with(binding) {
-        errorMessage.text = getString(string.check_internet_connection)
+    private fun renderNetworkError() {
+        binding.errorMessage.text = getString(string.check_internet_connection)
     }
 
-    private fun renderError() = with(binding) {
-        errorMessage.text = getString(string.unknown_error)
-    }
-
-    private fun showWebView(url: String) = with(binding) {
-        webView.webView.loadUrl(url)
-        webView.webView.webViewClient = webViewClient
+    private fun renderError() {
+        binding.errorMessage.text = getString(string.unknown_error)
     }
 
     private fun SuccessTemplate.changeQuestion() = with(binding) {
