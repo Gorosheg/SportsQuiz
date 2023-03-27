@@ -15,6 +15,7 @@ import com.example.sportsquiz.ui.builder.StateBuilder
 import com.example.sportsquiz.ui.webview.SportsQuizWebViewClient
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -42,6 +43,12 @@ val sportsQuizModule = module {
                 .setPersistenceEnabled(false)
                 .build()
         }
+    }
+/*
+* FirebaseRemoteConfig example
+*/
+    single<FirebaseRemoteConfig> {
+        FirebaseRemoteConfig.getInstance()
     }
 
     single {
