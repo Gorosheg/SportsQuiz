@@ -2,7 +2,6 @@ package com.example.sportsquiz.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
@@ -43,9 +42,9 @@ class MainActivity : AppCompatActivity() {
         viewModel.state.onEach { state -> renderState(state, savedInstanceState) }.launchIn(lifecycleScope)
     }
 
-    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+    override fun onSaveInstanceState(outState: Bundle) {
         binding.webView.webView.saveState(outState)
-        super.onSaveInstanceState(outState, outPersistentState)
+        super.onSaveInstanceState(outState)
     }
 
     private fun handleWebViewOnBackPressed() = with(binding) {
